@@ -94,7 +94,7 @@ production:
     <<: *default
     database: kamal_app_postgresql_production
     username: kamal_app_postgresql
-    password: <%= ENV["KAMAL_APP_POSTGRESQL_DATABASE_PASSWORD"] %>
+    password: <%= ENV["POSTGRES_PASSWORD"] %>
   cache:
     <<: *primary_production
     database: kamal_app_postgresql_production_cache
