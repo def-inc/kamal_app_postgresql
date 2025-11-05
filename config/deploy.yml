@@ -1,13 +1,13 @@
 # Name of your application. Used to uniquely configure containers.
-service: kamal_app_postgresql
+service: kamal-rails
 
 # Name of the container image (use your-user/app-name on external registries).
-image: kamal_app_postgresql
+image: ihatov08/kamal-rails
 
 # Deploy to these servers.
 servers:
   web:
-    - 192.168.0.1
+    - 163.44.127.102
   # job:
   #   hosts:
   #     - 192.168.0.1
@@ -20,14 +20,21 @@ servers:
 #
 # Don't use this when deploying to multiple web servers (then you have to terminate SSL at your load balancer).
 #
-# proxy:
-#   ssl: true
-#   host: app.example.com
+proxy:
+  ssl: true
+  host: kamal-rails.de-f.net
 
 # Where you keep your container images.
 registry:
   # Alternatives: hub.docker.com / registry.digitalocean.com / ghcr.io / ...
-  server: localhost:5555
+  # server: localhost:5555
+
+  # Needed for authenticated registries.
+  username: ihatov08
+
+  # Always use an access token rather than real password when possible.
+  password:
+    - KAMAL_REGISTRY_PASSWORD
 
   # Needed for authenticated registries.
   # username: your-user
@@ -40,10 +47,12 @@ registry:
 env:
   secret:
     - RAILS_MASTER_KEY
+    - POSTGRES_PASSWORD
   clear:
     # Run the Solid Queue Supervisor inside the web server's Puma process to do jobs.
     # When you start using multiple servers, you should split out job processing to a dedicated machine.
     SOLID_QUEUE_IN_PUMA: true
+    DB_HOST: db
 
     # Set number of processes dedicated to Solid Queue (default: 1)
     # JOB_CONCURRENCY: 3
@@ -96,8 +105,18 @@ builder:
 #   user: app
 
 # Use accessory services (secrets come from .kamal/secrets).
-# accessories:
-#   db:
+accessories:
+  db:
+    service: db
+    image: postgres:16.1
+    host: 163.44.127.102
+    env:
+      secret:
+        - POSTGRES_PASSWORD
+      clear:
+        POSTGRES_USER: kamal_app_postgresql
+    directories:
+      - data:/var/lib/postgresql/data
 #     image: mysql:8.0
 #     host: 192.168.0.2
 #     # Change to 3306 to expose port to the world instead of just local network.
