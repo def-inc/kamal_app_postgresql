@@ -14,17 +14,13 @@ jobs:
       DOCKER_BUILDKIT: 1
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Set up Ruby
         uses: ruby/setup-ruby@v1
         with:
-          ruby-version: 3.4.7
           bundler-cache: true
 
-      - name: Install dependencies
-        run: |
-          gem install kamal -v 2.8.2
       - name: ssh-agent
         env:
           SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
